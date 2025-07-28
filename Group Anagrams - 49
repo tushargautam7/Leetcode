@@ -1,0 +1,23 @@
+class Solution {
+public:
+    vector<vector<string>> groupAnagrams(vector<string>& strs) {
+        unordered_map<string,vector<string>>mpp;
+        for(int i=0;i<strs.size();i++){
+            string word=strs[i];
+            string key(26,'0');
+            for(int j=0;j<word.length();j++){
+                key[word[j]-'a']++;
+            }
+            if(mpp.find(key)!=mpp.end()){
+                mpp[key].push_back(word);
+            }else{
+                mpp[key]={word};
+            }
+        }
+        vector<vector<string>>result;
+        for(auto it=mpp.begin();it!=mpp.end();it++){
+            result.push_back(it->second);
+        }
+        return result;
+    }
+};

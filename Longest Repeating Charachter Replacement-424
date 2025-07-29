@@ -1,0 +1,26 @@
+class Solution {
+public:
+    int characterReplacement(string s, int k) {
+        vector<int> freq(26, 0); // 26 uppercase letters ke liye freq array
+        int left = 0;
+        int maxFreq = 0;
+        int maxLen = 0;
+
+        for (int right = 0; right < s.length(); right++) {
+            freq[s[right] - 'A']++; // current char ka freq badha
+
+            maxFreq = max(maxFreq, freq[s[right] - 'A']); // max freq update
+
+            // window size - max freq > k => zyada replace karna padta
+            while ((right - left + 1) - maxFreq > k) {
+                freq[s[left] - 'A']--; // left wale char ka freq kam kar
+                left++; // window chhoti kar
+            }
+
+            // valid window ka max length store kar
+            maxLen = max(maxLen, right - left + 1);
+        }
+
+        return maxLen;
+    }
+};

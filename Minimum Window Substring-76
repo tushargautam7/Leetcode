@@ -1,0 +1,58 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+string minWindow(string s, string t) {
+    // Bhai edge case handle kar raha
+    if (s.length() < t.length()) return "";
+
+    unordered_map<char, int> tFreq, window; // Bhai freq map bana raha
+
+    // Bhai t string ka freq map bana raha
+    for (char ch : t) tFreq[ch]++;
+
+    int have = 0, need = tFreq.size(); // Kitne match ho gaye aur total kitne chahiye
+    int left = 0, minLen = INT_MAX, start = 0;
+
+    // Bhai window chala raha full power mein
+    for (int right = 0; right < s.length(); right++) {
+        char ch = s[right];
+        window[ch]++;
+
+        // Bhai check kar raha ki char ka freq match hua ya nahi
+        if (tFreq.count(ch) && window[ch] == tFreq[ch]) {
+            have++; // Bhai ke paas ek required char poora ho gaya
+        }
+
+        // Jab sab char match ho gaye to window ko tight karega
+        while (have == need) {
+            // Bhai answer update karega agar chhoti window mil gayi
+            if ((right - left + 1) < minLen) {
+                minLen = right - left + 1;
+                start = left;
+            }
+
+            // Bhai ab window chhota karega left se
+            char leftChar = s[left];
+            window[leftChar]--;
+
+            // Agar important char ka freq kam ho gaya t ke required se
+            if (tFreq.count(leftChar) && window[leftChar] < tFreq[leftChar]) {
+                have--; // bhai ka match tut gaya, firse chahiye ye char
+            }
+
+            left++; // bhai left pointer aage badha raha
+        }
+    }
+
+    // Final answer nikaal ke de raha bhai
+    return minLen == INT_MAX ? "" : s.substr(start, minLen);
+}
+
+int main() {
+    string s = "ADOBECODEBANC";  // bhai ki string
+    string t = "ABC";            // bhai ko ye chahiye
+
+    string ans = minWindow(s, t); // bhai ka result
+    cout << "Bhai ka minimum window: " << ans << endl; // bhai print kar raha
+    return 0;
+}

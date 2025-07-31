@@ -1,0 +1,75 @@
+2 stack approach
+
+
+class MinStack {
+public:
+stack<int>st,minst;
+    MinStack() { 
+    }
+    void push(int val) {
+        int x=val;
+        st.push(x);
+        if(minst.empty())minst.push(x);
+        else minst.push(min(x,minst.top()));
+    }
+    void pop() {
+        st.pop();
+        minst.pop();
+    }
+    int top() {
+        return st.top();
+    }
+    
+    int getMin() {
+        return minst.top();
+    }
+};
+
+
+
+
+1 stack approach
+
+class MinStack {
+    stack<long long> st;
+    long long minVal;
+
+public:
+    MinStack() {
+        minVal = INT_MAX;
+    }
+
+    void push(int val) {
+        if (st.empty()) {
+            st.push(val);
+            minVal = val;
+        } else if (val >= minVal) {
+            st.push(val);
+        } else {
+            // Encode the value
+            st.push(2LL * val - minVal);
+            minVal = val;
+        }
+    }
+    void pop() {
+        if (st.top() >= minVal) {
+            st.pop();
+        } else {
+            // Decode previous min
+            minVal = 2LL * minVal - st.top();
+            st.pop();
+        }
+    }
+    int top() {
+        if (st.top() >= minVal) {
+            return st.top();
+        } else {
+            return minVal;
+        }
+    }
+
+    int getMin() {
+        return minVal;
+    }
+};
+

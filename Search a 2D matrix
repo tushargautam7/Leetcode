@@ -1,0 +1,30 @@
+class Solution {
+public:
+    bool searchMatrix(vector<vector<int>>& matrix, int target) {
+        int m = matrix.size();        // kitni row hai
+        if (m == 0 || matrix[0].size() == 0) return false;  // empty matrix ka check
+        
+        int n = matrix[0].size();     // har row me kitne element hai
+
+        int low = 0;
+        int high = m * n - 1;         // last index of 1D version of matrix
+
+        while (low <= high) {
+            int mid = low + (high - low) / 2; // beech ka index nikal liya
+
+            int row = mid / n;       // 2D me row ka index
+            int col = mid % n;       // 2D me column ka index
+            int val = matrix[row][col];
+
+            if (val == target) {
+                return true;         // mil gaya bhai
+            } else if (val < target) {
+                low = mid + 1;       // right half me jao
+            } else {
+                high = mid - 1;      // left half me jao
+            }
+        }
+
+        return false; // nahi mila bhai
+    }
+};

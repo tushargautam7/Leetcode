@@ -1,0 +1,35 @@
+class Solution {
+public:
+    int search(vector<int>& nums, int target) {
+        int left = 0;                          // bhai yeh start index ha
+        int right = nums.size() - 1;           // bhai yeh end index ha
+
+        while (left <= right) {
+            int mid = left + (right - left) / 2;  // overflow safe mid
+
+            if (nums[mid] == target) {
+                return mid;                     // bhai mil gaya direct
+            }
+
+            // Left half is sorted
+            if (nums[left] <= nums[mid]) {
+                // check if target lies in left sorted range
+                if (nums[left] <= target && target < nums[mid]) {
+                    right = mid - 1;           // bhai left side check kar
+                } else {
+                    left = mid + 1;            // bhai right side check kar
+                }
+            }
+            // Right half is sorted
+            else {
+                if (nums[mid] < target && target <= nums[right]) {
+                    left = mid + 1;            // bhai right side check kar
+                } else {
+                    right = mid - 1;           // bhai left side check kar
+                }
+            }
+        }
+
+        return -1;                             // bhai nahi mila
+    }
+};

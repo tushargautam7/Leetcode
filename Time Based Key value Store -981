@@ -1,0 +1,43 @@
+class TimeMap {
+public:
+    // Map bana liya bhai jisme key -> vector of {timestamp, value}
+    unordered_map<string, vector<pair<int, string>>> mp;
+
+    // Constructor - jab object banega
+    TimeMap() {
+        // Kuch bhi initialize nahi karna bhai, map apna kaam karega
+    }
+
+    // Set karna hai value with timestamp
+    void set(string key, string value, int timestamp) {
+        // Seedha us key ke vector me pair daal do
+        mp[key].push_back({timestamp, value});
+    }
+
+    // Get karni hai value at ya usse chhoti wali timestamp
+    string get(string key, int timestamp) {
+        // Pehle check kar le bhai key hai ya nahi
+        if(mp.find(key) == mp.end()) return "";
+
+        // Ab vector uthao us key ka
+        vector<pair<int, string>>& vec = mp[key];
+        int low = 0, high = vec.size() - 1;
+        string ans = "";
+
+        // Binary Search chalu bhai to find max timestamp <= given timestamp
+        while(low <= high){
+            int mid = low + (high - low) / 2;
+
+            // Agar mid timestamp chhota ya equal hai toh potential answer hai
+            if(vec[mid].first <= timestamp){
+                ans = vec[mid].second; // store kar le answer
+                low = mid + 1; // aage dekh le koi aur bada mile toh
+            }
+            else {
+                high = mid - 1; // timestamp bada hai toh left me dekh
+            }
+        }
+
+        return ans; // mil gaya bhai answer
+    }
+};

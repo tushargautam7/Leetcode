@@ -1,0 +1,38 @@
+#include <vector>
+#include <stack>
+#include <algorithm>
+using namespace std;
+
+class Solution {
+public:
+    int largestRectangleArea(vector<int>& heights) {
+        int n = heights.size();
+        stack<int> st;  // Bhai ye stack humesha kaam ka hai — pichle building ke index sambhal ke rakhta hai
+        int maxArea = 0;  // Yahin pe apna answer banega — sabse bada area
+
+        // Bhai har building check karenge — aur end me ek 0 height wali imaginary building dal denge
+        for (int i = 0; i <= n; i++) {
+            // Last ke baad, 0 height ki building samajho — saaf safai ke liye
+            int currHeight = (i == n) ? 0 : heights[i];
+
+            // Jab tak current height choti hai stack ke top se, tab tak area nikaalte jao
+            while (!st.empty() && currHeight < heights[st.top()]) {
+                // Upar wali building uthao (jo ab girne waali hai bhai)
+                int height = heights[st.top()];
+                st.pop();
+
+                // Width ka hisaab lagao: agar stack khali hai, matlab poori chaukhat le sakta tha
+                int width = st.empty() ? i : i - st.top() - 1;
+
+                // Area nikaal ke max se compare kar do
+                int area = height * width;
+                maxArea = max(maxArea, area);
+            }
+
+            // Jo building bachi hai, uska index stack me daal do bhai
+            st.push(i);
+        }
+
+        return maxArea;  // Bhai ye lo apna final jawab, sabse badi lambi chaunkat
+    }
+};

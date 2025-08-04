@@ -1,0 +1,32 @@
+class Solution {
+public:
+    int carFleet(int target, vector<int>& position, vector<int>& speed) {
+        int n = position.size();
+
+        // Step 1: Pair each car's (position, time to reach target)
+        vector<pair<int, double>> cars;
+
+        for (int i = 0; i < n; ++i) {
+            double time = (double)(target - position[i]) / speed[i];
+            cars.push_back({position[i], time});
+        }
+
+        // Step 2: Sort cars in descending order of position
+        sort(cars.rbegin(), cars.rend());
+
+        // Step 3: Count fleets
+        int fleets = 0;
+        double prevTime = 0.0;
+
+        for (int i = 0; i < n; ++i) {
+            double currTime = cars[i].second;
+
+            if (currTime > prevTime) {
+                fleets++;
+                prevTime = currTime;
+            }
+        }
+
+        return fleets;
+    }
+};

@@ -1,0 +1,27 @@
+class Solution {
+public:
+    int findMin(vector<int>& nums) {
+        int left = 0;
+        int right = nums.size() - 1;
+
+        // Jab tak left < right, tab tak binary search chalega
+        while (left < right) {
+            int mid = left + (right - left) / 2; // mid nikaal liya
+
+            if (nums[mid] < nums[right]) {
+                // right side sorted hai, min mid ya uske left me hi hoga
+                right = mid;
+            } else if (nums[mid] > nums[right]) {
+                // mid wala bada hai right se, iska matlab min right side me hoga
+                left = mid + 1;
+            } else {
+                // nums[mid] == nums[right] → confusion hai, duplicate hoga
+                // ek element right se hata do, min miss nahi hoga
+                right--;
+            }
+        }
+
+        // Jab loop rukta hai, left == right ho jaata hai, waha min hota hai
+        return nums[left];
+    }
+};

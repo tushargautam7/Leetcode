@@ -1,0 +1,35 @@
+void reorderList(ListNode* head) {
+    // Bhai, agar list empty ya ek hi node hai toh kuch mat kar
+    if (!head || !head->next) return;
+    
+    // Pehle slow-fast pointer se beech mein pohonch ja
+    ListNode* slow = head;
+    ListNode* fast = head;
+    while (fast && fast->next) {
+        slow = slow->next;
+        fast = fast->next->next;
+    }
+
+    // Ab second half ko ulta kar
+    ListNode* prev = nullptr;
+    ListNode* curr = slow->next;
+    slow->next = nullptr;
+    while (curr) {
+        ListNode* nextTemp = curr->next;
+        curr->next = prev;
+        prev = curr;
+        curr = nextTemp;
+    }
+
+    // Ab ek side se pehle, ek side se last insert kar 
+    ListNode* first = head;
+    ListNode* second = prev;
+    while (second) {
+        ListNode* temp1 = first->next;
+        ListNode* temp2 = second->next;
+        first->next = second;
+        second->next = temp1;
+        first = temp1;
+        second = temp2;
+    }
+}

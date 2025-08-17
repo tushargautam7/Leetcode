@@ -1,0 +1,35 @@
+class Solution {
+public:
+    double new21Game(int n, int k, int maxPts) {
+        // agar Alice ko k tak pahuchna hi nahi (ya n >= k + maxPts)
+        // to simple answer 1.0 hoga kyunki wo kabhi n se bada nahi jayegi
+        if (k == 0 || n >= k + maxPts) return 1.0;
+
+        // dp[i] = prob ki Alice ka final score exactly i ho
+        vector<double> dp(n + 1, 0.0);
+        dp[0] = 1.0; // start me 0 points se
+        double windowSum = 1.0; // last maxPts probs ka sum store karna
+        double ans = 0.0;
+
+        // dp fill karte hai
+        for (int i = 1; i <= n; i++) {
+            // prob[i] = windowSum / maxPts (kyunki equally likely draw hota hai)
+            dp[i] = windowSum / maxPts;
+
+            // agar abhi tak points k se chhote hain -> uske prob ko window me add kar
+            if (i < k) {
+                windowSum += dp[i];
+            } else {
+                // agar points >= k -> iska matlab final stop hogaya
+                ans += dp[i];
+            }
+
+            // window ko slide karna (pichle maxPts se bahar jo prob gaye unhe nikalna)
+            if (i - maxPts >= 0) {
+                windowSum -= dp[i - maxPts];
+            }
+        }
+
+        return ans;
+    }
+};

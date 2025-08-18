@@ -1,0 +1,55 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+class Solution {
+public:
+    bool judgePoint24(vector<int>& cards) {
+        vector<double> nums;
+        for (int x : cards) nums.push_back((double)x); // sabko double me convert
+        return solve(nums);
+    }
+
+    bool solve(vector<double> nums) {
+        // agar sirf ek num bacha, check karo kya 24 hai
+        if (nums.size() == 1) {
+            return fabs(nums[0] - 24.0) < 1e-6;
+        }
+
+        // try all pairs of nums[i], nums[j]
+        for (int i = 0; i < nums.size(); i++) {
+            for (int j = 0; j < nums.size(); j++) {
+                if (i == j) continue; // same index mat lo
+
+                vector<double> next;
+                // baki bache numbers push kar do
+                for (int k = 0; k < nums.size(); k++) {
+                    if (k != i && k != j) next.push_back(nums[k]);
+                }
+
+                // ab do numbers pe saare operations try karo
+                for (int op = 0; op < 4; op++) {
+                    // '+' aur '*' symmetric hai, isliye i < j case skip karna allowed
+                    if ((op == 0 || op == 2) && i > j) continue;
+
+                    if (op == 0) { // add
+                        next.push_back(nums[i] + nums[j]);
+                    } else if (op == 1) { // subtract
+                        next.push_back(nums[i] - nums[j]);
+                    } else if (op == 2) { // multiply
+                        next.push_back(nums[i] * nums[j]);
+                    } else if (op == 3) { // divide
+                        if (fabs(nums[j]) < 1e-6) continue; // zero div avoid
+                        next.push_back(nums[i] / nums[j]);
+                    }
+
+                    // recursive check
+                    if (solve(next)) return true;
+
+                    // backtrack -> last push_back hata do
+                    next.pop_back();
+                }
+            }
+        }
+        return false;
+    }
+};

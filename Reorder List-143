@@ -1,0 +1,43 @@
+class Solution {
+public:
+    void reorderList(ListNode* head) {
+        if (!head || !head->next) return;
+
+        // STEP 1: middle find using slow-fast
+        ListNode* slow = head;
+        ListNode* fast = head;
+        while (fast->next && fast->next->next) {
+            slow = slow->next;
+            fast = fast->next->next;
+        }
+
+        // ab slow middle pe h
+        ListNode* second = slow->next;
+        slow->next = NULL; // list break
+
+        // STEP 2: reverse 2nd half
+        ListNode* prev = NULL;
+        while (second) {
+            ListNode* nxt = second->next;
+            second->next = prev;
+            prev = second;
+            second = nxt;
+        }
+
+        // prev ab reversed list ka head h
+        ListNode* first = head;
+        second = prev;
+
+        // STEP 3: merge 2 lists alternately
+        while (second) {
+            ListNode* tmp1 = first->next;
+            ListNode* tmp2 = second->next;
+
+            first->next = second;
+            second->next = tmp1;
+
+            first = tmp1;
+            second = tmp2;
+        }
+    }
+};

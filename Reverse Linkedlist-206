@@ -1,0 +1,25 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+// Definition for singly-linked list.
+struct ListNode {
+    int val;
+    ListNode* next;
+    ListNode(int x) : val(x), next(NULL) {}
+};
+
+class Solution {
+public:
+    ListNode* reverseList(ListNode* head) {
+        ListNode* prev = NULL;    // pehle kuch nahi hai
+        ListNode* curr = head;    // head se start karte hain
+
+        while (curr != NULL) {
+            ListNode* nxt = curr->next; // agla node store karo
+            curr->next = prev;          // ulta link banao
+            prev = curr;                // prev ko aage badhao
+            curr = nxt;                 // curr ko next pe le jao
+        }
+        return prev; // naya head
+    }
+};

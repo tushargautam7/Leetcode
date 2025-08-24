@@ -1,0 +1,24 @@
+class Solution {
+public:
+    int longestSubarray(vector<int>& nums) {
+        int left = 0;          // left pointer bro
+        int zeroCount = 0;     // kitne 0s hai window me
+        int ans = 0;           // final answer store karne ka
+
+        // right pointer ko aage leke chal
+        for(int right = 0; right < nums.size(); right++) {
+            if(nums[right] == 0) zeroCount++;  // agar zero mila toh count++
+
+            // agar ek se jyada 0 ho gaye toh left ko move kar
+            while(zeroCount > 1) {
+                if(nums[left] == 0) zeroCount--; 
+                left++; // shrink window
+            }
+
+            // abhi window me max 1 zero hai, so calculate length
+            ans = max(ans, right - left); 
+        }
+
+        return ans; 
+    }
+};

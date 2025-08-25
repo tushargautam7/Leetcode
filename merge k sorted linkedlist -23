@@ -1,0 +1,39 @@
+class Solution {
+public:
+    // comparator banaya priority_queue ke liye
+    struct cmp {
+        bool operator()(ListNode* a, ListNode* b) {
+            return a->val > b->val;  // min-heap
+        }
+    };
+
+    ListNode* mergeKLists(vector<ListNode*>& lists) {
+        // min-heap bana diya
+        priority_queue<ListNode*, vector<ListNode*>, cmp> pq;
+
+        // sare lists ke head daal diye
+        for(auto node : lists) {
+            if(node) pq.push(node);
+        }
+
+        // dummy node banayi easy connection ke liye
+        ListNode* dummy = new ListNode(0);
+        ListNode* tail = dummy;
+
+        // jab tak pq khaali na ho
+        while(!pq.empty()) {
+            // sabse chhota nikal
+            ListNode* top = pq.top();
+            pq.pop();
+
+            // tail ke aage chipka de
+            tail->next = top;
+            tail = tail->next;
+
+            // agar is node ka next h to pq mein daal
+            if(top->next) pq.push(top->next);
+        }
+
+        return dummy->next; // dummy ke next mein final list ka head h
+    }
+};

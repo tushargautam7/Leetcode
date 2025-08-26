@@ -1,0 +1,23 @@
+class Solution {
+public:
+    int areaOfMaxDiagonal(vector<vector<int>>& dimensions) {
+        int maxDiagSq = 0; // store longest diagonal squared
+        int maxArea = 0;   // store area corresponding to max diagonal
+
+        for (auto &rect : dimensions) {
+            int l = rect[0];
+            int w = rect[1];
+            int diagSq = l * l + w * w; // diagonal squared
+            int area = l * w;
+
+            if (diagSq > maxDiagSq) {
+                maxDiagSq = diagSq; // new longest diagonal
+                maxArea = area;
+            } else if (diagSq == maxDiagSq) {
+                maxArea = std::max(maxArea, area); // same diagonal, pick max area
+            }
+        }
+
+        return maxArea;
+    }
+};

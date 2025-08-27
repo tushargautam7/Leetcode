@@ -1,0 +1,124 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+class Solution {
+public:
+    int lenOfVDiagonal(vector<vector<int>>& grid) {
+        int n = grid.size();
+        if (n == 0) return 0;
+        int m = grid[0].size();
+        if (m == 0) return 0;
+
+        // directions in clockwise order so (d+1)%4 is clockwise 90-degree rotation
+        vector<int> dr = {1, 1, -1, -1};
+        vector<int> dc = {1, -1, -1, 1};
+
+        // len1[d][i][j] => longest run starting at (i,j) along dir d when expecting value 2
+        // len2[d][i][j] => longest run starting at (i,j) along dir d when expecting value 0
+        vector<vector<vector<int>>> len1(4, vector<vector<int>>(n, vector<int>(m, 0)));
+        vector<vector<vector<int>>> len2(4, vector<vector<int>>(n, vector<int>(m, 0)));
+
+        // compute len1 and len2 for each direction with DP scanning in reverse so next cell known
+        for (int d = 0; d < 4; ++d) {
+            int rstart = (dr[d] == 1 ? n-1 : 0);
+            int rend = (dr[d] == 1 ? -1 : n);
+            int rstep = (dr[d] == 1 ? -1 : 1);
+
+            int cstart = (dc[d] == 1 ? m-1 : 0);
+            int cend = (dc[d] == 1 ? -1 : m);
+            int cstep = (dc[d] == 1 ? -1 : 1);
+
+            for (int i = rstart; i != rend; i += rstep) {
+                for (int j = cstart; j != cend; j += cstep) {
+                    int ni = i + dr[d], nj = j + dc[d];
+                    int next_len1 = 0, next_len2 = 0;
+                    if (ni >= 0 && ni < n && nj >= 0 && nj < m) {
+                        next_len1 = len1[d][ni][nj];
+                        next_len2 = len2[d][ni][nj];
+                    }
+                    // expecting 2 at (i,j)
+                    if (grid[i][j] == 2) {
+                        // if current is 2, it contributes 1 + continuation where next expects 0
+                        len1[d][i][j] = 1 + next_len2;
+                    } else {
+                        len1[d][i][j] = 0;
+                    }
+                    // expecting 0 at (i,j)
+                    if (grid[i][j] == 0) {
+                        // if current is 0, it contributes 1 + continuation where next expects 2
+                        len2[d][i][j] = 1 + next_len1;
+                    } else {
+                        len2[d][i][j] = 0;
+                    }
+                }
+            }
+        }
+
+        int ans = 0;
+        // iterate all possible starting cells (must be 1)
+        for (int i = 0; i < n; ++i) {
+            for (int j = 0; j < m; ++j) {
+                if (grid[i][j] != 1) continue; // start must be 1
+                // try all 4 initial diagonal directions
+                for (int d = 0; d < 4; ++d) {
+                    int di = dr[d], dj = dc[d];
+                    int ni = i + di, nj = j + dj;
+                    int straight_len = 1; // at least start cell
+                    if (ni >= 0 && ni < n && nj >= 0 && nj < m) {
+                        // after start (1) we expect 2, so we can use len1 at next cell to extend
+                        straight_len = 1 + len1[d][ni][nj];
+                    }
+                    // update ans with no-turn case
+                    ans = max(ans, straight_len);
+
+                    // consider turning at t-th cell along first leg (t from 1..straight_len)
+                    // t = number of cells in first leg (includes start and turning cell)
+                    int r = i, c = j;
+                    for (int t = 1; t <= straight_len; ++t) {
+                        // r,c = position of turning cell: start + (t-1) * (di,dj)
+                        if (t > 1) {
+                            r += di;
+                            c += dj;
+                        }
+                        // next cell after turn is r + rotated_dir
+                        int d2 = (d + 1) % 4; // clockwise 90-degree rotation
+                        int ri = r + dr[d2], cj = c + dc[d2];
+                        if (ri < 0 || ri >= n || cj < 0 || cj >= m) {
+                            // can't continue after turn, total length is just t
+                            ans = max(ans, t);
+                            continue;
+                        }
+                        // expected value at the next cell index = t
+                        // if t%2==1 -> expected 2 (state len1), else -> expected 0 (state len2)
+                        int second_len = 0;
+                        if (t % 2 == 1) {
+                            // expecting 2 at index t
+                            second_len = len1[d2][ri][cj];
+                        } else {
+                            // expecting 0 at index t
+                            second_len = len2[d2][ri][cj];
+                        }
+                        ans = max(ans, t + second_len);
+                    }
+                }
+            }
+        }
+        return ans;
+    }
+};
+
+// For quick local testing (not required by LeetCode style):
+/*
+int main() {
+    Solution sol;
+    vector<vector<int>> grid = {
+        {2,2,1,2,2},
+        {2,0,2,2,0},
+        {2,0,1,1,0},
+        {1,0,2,2,2},
+        {2,0,0,2,2}
+    };
+    cout << sol.lenOfVDiagonal(grid) << "\n"; // expect 5
+    return 0;
+}
+*/

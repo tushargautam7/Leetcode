@@ -1,0 +1,46 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+class Solution {
+public:
+    vector<vector<int>> sortMatrix(vector<vector<int>>& grid) {
+        int n = grid.size();
+        // map from diagonal key (i-j) to vector of elements (in top->bottom order)
+        unordered_map<int, vector<int>> diag;
+        diag.reserve(n * 2);
+
+        // 1) collect values per diagonal in top->bottom order
+        for (int i = 0; i < n; ++i) {
+            for (int j = 0; j < n; ++j) {
+                int key = i - j;
+                diag[key].push_back(grid[i][j]); // pushing in i increasing => top->bottom
+            }
+        }
+
+        // 2) sort each diagonal according to its triangle
+        for (auto &p : diag) {
+            int key = p.first;
+            auto &vec = p.second;
+            if (key >= 0) {
+                // bottom-left triangle (including main diag) => non-increasing
+                sort(vec.begin(), vec.end(), greater<int>()); // biggest at front -> top cell gets biggest
+            } else {
+                // top-right triangle => non-decreasing
+                sort(vec.begin(), vec.end()); // smallest at front -> top cell gets smallest
+            }
+        }
+
+        // 3) write values back using index trackers for each diagonal
+        unordered_map<int,int> idx;
+        idx.reserve(diag.size());
+        for (int i = 0; i < n; ++i) {
+            for (int j = 0; j < n; ++j) {
+                int key = i - j;
+                int k = idx[key]++; // get next index for this diagonal
+                grid[i][j] = diag[key][k]; // put sorted value back (top->bottom order preserved)
+            }
+        }
+
+        return grid;
+    }
+};

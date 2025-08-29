@@ -1,0 +1,17 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+class Solution {
+public:
+    long long flowerGame(int n, int m) {
+        // bhai simple: alice jeetegi jab x+y odd ho
+        long long odd_n = (n + 1LL) / 2LL;   // 1..n mei odd numbers count
+        long long even_n = n / 2LL;          // 1..n mei even numbers count
+        long long odd_m = (m + 1LL) / 2LL;   // 1..m mei odd numbers count
+        long long even_m = m / 2LL;          // 1..m mei even numbers count
+
+        // sum odd = odd_x * even_y + even_x * odd_y
+        long long ans = odd_n * even_m + even_n * odd_m;
+        return ans;
+    }
+};

@@ -1,0 +1,61 @@
+class Solution {
+public:
+    // Ye helper ek group ko reverse karega -> head se tail tak
+    ListNode* reverseList(ListNode* head, ListNode* tail) {
+        // prev = tail ke baad ka node (next group ka start hoga)
+        ListNode* prev = tail->next;
+        ListNode* curr = head; // curr abhi group ke start pe hai
+
+        // jab tak poora group ulta na ho jaye
+        while (prev != tail) {
+            ListNode* nxt = curr->next; // curr ka agla bacha lo
+            curr->next = prev;          // link ulta kar do (curr->prev)
+            prev = curr;                // prev ko ek step aage le jao
+            curr = nxt;                 // curr ko next pe move karo
+        }
+
+        // ab tail new head ban gaya hai
+        return tail;
+    }
+
+    ListNode* reverseKGroup(ListNode* head, int k) {
+        // Dummy node bana ke list ke head se jod diya
+        // isse head change hone pe bhi tension nhi
+        ListNode dummy(0);
+        dummy.next = head;
+
+        // prevGroupEnd = pichle group ka end (pehle dummy hai)
+        ListNode* prevGroupEnd = &dummy;
+
+        while (true) {
+            // groupStart = abhi wale group ka start node
+            ListNode* groupStart = prevGroupEnd->next;
+            // groupEnd = abhi wale group ka end node (find karna hai)
+            ListNode* groupEnd = prevGroupEnd;
+
+            // k nodes aage jao groupEnd ko le jaake
+            for (int i = 0; i < k && groupEnd; i++) {
+                groupEnd = groupEnd->next;
+            }
+            // agar nodes kam pad gayi (k se less) to break
+            if (!groupEnd) break;
+
+            // nextGroupStart = is group ke baad jo bacha
+            ListNode* nextGroupStart = groupEnd->next;
+
+            // ab groupStart -> groupEnd ko reverse kar do
+            ListNode* newHead = reverseList(groupStart, groupEnd);
+
+            // prevGroupEnd ab new head se jod do
+            prevGroupEnd->next = newHead;
+            // groupStart ab last node ban gaya, isko nextGroup se jod do
+            groupStart->next = nextGroupStart;
+
+            // ab prevGroupEnd ko naya set karo (groupStart pe)
+            prevGroupEnd = groupStart;
+        }
+
+        // dummy.next hi final head hoga
+        return dummy.next;
+    }
+};

@@ -1,0 +1,63 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+// LeetCode pe ye already diya hota hai, but yaha define kar rahe hain
+struct ListNode {
+    int val;            // value jo node ke andar hai
+    ListNode* next;     // pointer next node ki taraf
+    ListNode() : val(0), next(nullptr) {}
+    ListNode(int x) : val(x), next(nullptr) {}
+    ListNode(int x, ListNode* nxt) : val(x), next(nxt) {}
+};
+
+// Comparator class banayi jisse priority_queue min-heap ki tarah kaam kare
+struct CompareNodes {
+    bool operator()(ListNode* a, ListNode* b) {
+        // agar a->val b->val se bada hai to a ko niche bhej do
+        // matlab smallest value upar aa jaye
+        return a->val > b->val;
+    }
+};
+
+class Solution {
+public:
+    ListNode* mergeKLists(vector<ListNode*>& lists) {
+        
+        // Step 1: ek priority_queue (min-heap) banate hain jisme hamesha
+        // chhota value wala node upar (top) rahega
+        priority_queue<ListNode*, vector<ListNode*>, CompareNodes> pq;
+
+        // Step 2: saari linked lists ke head nodes ko heap me daal dete hain
+        for (ListNode* head : lists) {
+            if (head != nullptr) {
+                pq.push(head);  // agar list khaali nahi hai tabhi daal
+            }
+        }
+
+        // Step 3: ek dummy node banate hain (iska kaam hai result ka base banna)
+        // aur ek tail pointer rakhenge jo result list ka last node track karega
+        ListNode dummy(0);
+        ListNode* tail = &dummy;
+
+        // Step 4: jab tak heap khaali nahi hoti tab tak chhota element nikaalte raho
+        while (!pq.empty()) {
+            
+            // 4.1: heap se sabse chhota node nikala
+            ListNode* smallest = pq.top();
+            pq.pop();
+
+            // 4.2: us node ko result list ke tail ke aage chipka diya
+            tail->next = smallest;
+            tail = tail->next; // tail ko aage badha diya
+
+            // 4.3: agar is node ka next exist karta hai
+            // to usko bhi heap me daal do future ke liye
+            if (smallest->next != nullptr) {
+                pq.push(smallest->next);
+            }
+        }
+
+        // Step 5: result list ke head ko return karte hain (dummy.next)
+        return dummy.next;
+    }
+};

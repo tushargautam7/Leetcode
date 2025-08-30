@@ -1,0 +1,13 @@
+class Solution {
+public:
+    TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {
+        int a=p->val;
+        int b=q->val;
+        while(root){
+            if(a<root->val && b<root->val)root=root->left;
+            else if(a>root->val && b>root->val)root=root->right;
+            else return root;
+        }
+        return nullptr;
+    }
+};

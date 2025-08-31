@@ -1,0 +1,42 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+// basic tree node
+struct TreeNode {
+    int val;
+    TreeNode *left;
+    TreeNode *right;
+    TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+};
+
+class Solution {
+public:
+    int preIndex = 0; // track current index in preorder
+
+    // helper to build tree
+    TreeNode* build(vector<int>& preorder, vector<int>& inorder, int inStart, int inEnd) {
+        if(inStart > inEnd) return NULL; // no tree in this range
+
+        // root is always preorder[preIndex]
+        int rootVal = preorder[preIndex++];
+        TreeNode* root = new TreeNode(rootVal);
+
+        // find root in inorder
+        int inIndex;
+        for(inIndex = inStart; inIndex <= inEnd; inIndex++) {
+            if(inorder[inIndex] == rootVal) break;
+        }
+
+        // build left subtree
+        root->left = build(preorder, inorder, inStart, inIndex-1);
+
+        // build right subtree
+        root->right = build(preorder, inorder, inIndex+1, inEnd);
+
+        return root;
+    }
+
+    TreeNode* buildTree(vector<int>& preorder, vector<int>& inorder) {
+        return build(preorder, inorder, 0, inorder.size()-1);
+    }
+};

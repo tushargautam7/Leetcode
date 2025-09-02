@@ -1,0 +1,76 @@
+class TrieNode {
+public:
+    bool isEnd;                  // yaha word end hota h ya nahi
+    TrieNode* children[26];      // 26 alphabets ka map
+
+    TrieNode() {
+        isEnd = false;           // shuru me word end nahi h
+        for (int i = 0; i < 26; i++) {
+            children[i] = NULL;  // saare path khaali
+        }
+    }
+};
+
+// -------------------------
+// Yo WordDictionary class
+// -------------------------
+class WordDictionary {
+public:
+    TrieNode* root;              // root node
+
+    // constructor: ek root node bana ke start kar
+    WordDictionary() {
+        root = new TrieNode();
+    }
+    
+    // -------------------------
+    // addWord function (same as insert)
+    // -------------------------
+    void addWord(string word) {
+        TrieNode* node = root;   // root se start
+        for (int i = 0; i < word.size(); i++) {
+            char c = word[i];
+            int idx = c - 'a';
+            if (node->children[idx] == NULL) { // agar path missing
+                node->children[idx] = new TrieNode(); // naya node bna
+            }
+            node = node->children[idx]; // aage move
+        }
+        node->isEnd = true;  // last pe word khatam
+    }
+    
+    // -------------------------
+    // helper function for search (DFS)
+    // -------------------------
+    bool dfs(string &word, int pos, TrieNode* node) {
+        // agar end tak aa gya
+        if (pos == word.size()) {
+            return node->isEnd; // check karo word khatam hota h ya nahi
+        }
+        
+        char c = word[pos];
+        
+        if (c == '.') {
+            // '.' ka matlab -> kisi bhi child pe ja sakte h
+            for (int i = 0; i < 26; i++) {
+                if (node->children[i] != NULL) {
+                    if (dfs(word, pos + 1, node->children[i])) {
+                        return true; // agar koi bhi path valid h
+                    }
+                }
+            }
+            return false; // koi path match nahi hua
+        } else {
+            int idx = c - 'a';
+            if (node->children[idx] == NULL) return false; // path hi nahi mila
+            return dfs(word, pos + 1, node->children[idx]); // aage search
+        }
+    }
+    
+    // -------------------------
+    // search function (with '.' support)
+    // -------------------------
+    bool search(string word) {
+        return dfs(word, 0, root);
+    }
+};

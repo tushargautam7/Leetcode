@@ -1,0 +1,73 @@
+class TrieNode {
+public:
+    bool isEnd;                  // yaha word end hota h ya nahi
+    TrieNode* children[26];      // 26 alphabets ka road map
+
+    TrieNode() {
+        isEnd = false;           // by default koi word end nahi hota
+        for (int i = 0; i < 26; i++) {
+            children[i] = NULL;  // sab path khaali se start hote h
+        }
+    }
+};
+
+// -------------------------
+// Yo Trie class
+// -------------------------
+class Trie {
+public:
+    TrieNode* root;              // root node
+
+    // constructor: jab bhi Trie bnega, ek root node khada kar do
+    Trie() {
+        root = new TrieNode();
+    }
+    
+    // -------------------------
+    // INSERT function
+    // -------------------------
+    void insert(string word) {
+        TrieNode* node = root;   // root se start hoga hamesha
+        for (int i = 0; i < word.size(); i++) { // ek ek char traverse kar
+            char c = word[i];                 // current char nikala
+            int idx = c - 'a';                // char ka index banaya
+            if (node->children[idx] == NULL) { // agar path exist nahi karta
+                node->children[idx] = new TrieNode(); // naya node bana diya
+            }
+            node = node->children[idx];        // node ko aage shift kar diya
+        }
+        node->isEnd = true;   // last char pe word end mark kar diya
+    }
+    
+    // -------------------------
+    // SEARCH function
+    // -------------------------
+    bool search(string word) {
+        TrieNode* node = root;   // root se start
+        for (int i = 0; i < word.size(); i++) { // ek ek char traverse kar
+            char c = word[i];
+            int idx = c - 'a';
+            if (node->children[idx] == NULL) { // agar path tut gaya
+                return false;   // matlab word nahi mila
+            }
+            node = node->children[idx]; // aage badh
+        }
+        return node->isEnd;   // pura word tabhi mila jab end mark h
+    }
+    
+    // -------------------------
+    // STARTSWITH function
+    // -------------------------
+    bool startsWith(string prefix) {
+        TrieNode* node = root;   // root se start
+        for (int i = 0; i < prefix.size(); i++) { // ek ek char traverse kar
+            char c = prefix[i];
+            int idx = c - 'a';
+            if (node->children[idx] == NULL) { // agar path hi nahi mila
+                return false;   // prefix exist hi nahi karta
+            }
+            node = node->children[idx]; // aage badh
+        }
+        return true;   // pura prefix mil gaya
+    }
+};

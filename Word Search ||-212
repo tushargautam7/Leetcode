@@ -1,0 +1,64 @@
+#include <bits/stdc++.h>   // sab kuch ek saath import karne ka jugaad
+using namespace std;
+
+struct TrieNode {
+    TrieNode* child[26];   // har node ke 26 bacche (a-z letters)
+    string word = "";      // agar yaha tak koi word end hota hai to store kar lenge
+
+    TrieNode(){
+        for(int i=0;i<26;i++) child[i] = NULL;  // sab bacche init null
+    }
+};
+
+class Solution {
+public:
+    int m,n;  // board ke rows aur cols
+
+    // DFS with trie
+    void dfs(vector<vector<char>>& board, int i, int j, TrieNode* node, vector<string>& ans){
+        char c = board[i][j];                      // current cell ka char nikaala
+        if(c=='#' || node->child[c-'a'] == NULL)   // agar visited h ya trie me path hi nhi h
+            return;                                // sidha bhaag jaa
+
+        node = node->child[c-'a'];                 // trie ka next level me chale gaye
+
+        if(node->word != ""){                      // agar yaha tak koi full word end hota hai
+            ans.push_back(node->word);             // slang: full word mil gaya to result me daal diya
+            node->word = "";                       // duplicate avoid karne ke liye clear kar diya
+        }
+
+        board[i][j] = '#';                         // slang: visit mark kar diya
+        if(i>0) dfs(board,i-1,j,node,ans);         // upar check karo
+        if(j>0) dfs(board,i,j-1,node,ans);         // left check karo
+        if(i<m-1) dfs(board,i+1,j,node,ans);       // niche check karo
+        if(j<n-1) dfs(board,i,j+1,node,ans);       // right check karo
+        board[i][j] = c;                           // slang: backtrack - original char wapas daal diya
+    }
+
+    vector<string> findWords(vector<vector<char>>& board, vector<string>& words) {
+        m = board.size();       // rows nikaale
+        n = board[0].size();    // cols nikaale
+
+        // step1: build trie
+        TrieNode* root = new TrieNode();       // root banaya
+        for(auto &w : words){                  // har word uthaya
+            TrieNode* cur = root;              // root se start
+            for(auto ch : w){                  // har char insert karo
+                if(cur->child[ch-'a']==NULL){  // agar path pehle se nhi bana
+                    cur->child[ch-'a'] = new TrieNode(); // naya node banao
+                }
+                cur = cur->child[ch-'a'];      // next node pe chalo
+            }
+            cur->word = w;                     // last node pe full word store kar do
+        }
+
+        // step2: dfs start karo
+        vector<string> ans;                    // result dabba
+        for(int i=0;i<m;i++){                  // board ke har row
+            for(int j=0;j<n;j++){              // board ke har col
+                dfs(board,i,j,root,ans);       // dfs maro with trie
+            }
+        }
+        return ans;                            // finally saare words wapas bhej do
+    }
+};

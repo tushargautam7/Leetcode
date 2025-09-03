@@ -1,0 +1,21 @@
+class KthLargest {
+public:
+    int k;  
+    priority_queue<int, vector<int>, greater<int>> pq; // slang: min-heap bna liya
+
+    // Constructor: jab object banega
+    KthLargest(int k, vector<int>& nums) {
+        this->k = k;
+        for (int x : nums) {
+            pq.push(x);              // slang: number ghusa diya
+            if (pq.size() > k) pq.pop(); // slang: sirf k top numbers bacha                sirf max rakhega utna size ka agar outof bound ho toh remove kar dena 
+        }
+    }
+    
+    // Jab bhi add() call hoga
+    int add(int val) {
+        pq.push(val); 
+        if (pq.size() > k) pq.pop(); 
+        return pq.top(); // slang: kth largest number mila
+    }
+};

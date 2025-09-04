@@ -1,0 +1,10 @@
+class Solution {
+public:
+    int findClosest(int x, int y, int z) {
+        int xkastore=abs(x-z);
+        int ykastore=abs(y-z);
+
+        if(xkastore==ykastore)return 0;
+        if(xkastore<ykastore){return 1;} else {return 2;}
+    }
+};

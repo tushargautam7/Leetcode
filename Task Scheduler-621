@@ -1,0 +1,43 @@
+class Solution {
+public:
+   int leastInterval(vector<char>& tasks, int n) {
+    // 1. Frequency table
+    vector<int> freq(26,0);
+    for(char t: tasks) freq[t-'A']++;
+
+    // 2. Max heap for tasks by frequency
+    priority_queue<int> pq;
+    for(int f: freq) if(f > 0) pq.push(f);
+
+    int totalIntervals = 0;
+
+    while(!pq.empty()) {
+        vector<int> temp; // store tasks used in this round
+        int cnt = 0;
+
+        // 3. Execute up to n+1 tasks in this round
+        for(int i = 0; i <= n; i++) {
+            if(!pq.empty()) {
+                int f = pq.top(); pq.pop();
+                f--; // execute task
+                temp.push_back(f); 
+                cnt++;
+            }
+        }
+
+        // 4. Push back tasks with remaining frequency
+        for(int f: temp) {
+            if(f > 0) pq.push(f);
+        }
+
+        // 5. Add intervals: either full round (n+1) or just executed tasks if pq empty
+        if(pq.empty()) {
+    totalIntervals += cnt;     // last round, no idle needed
+} else {
+    totalIntervals += n + 1;   // full round including possible idle
+}
+    }
+
+    return totalIntervals;
+}
+};

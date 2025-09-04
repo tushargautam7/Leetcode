@@ -1,0 +1,48 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+class MedianFinder {
+public:
+    // left side max-heap (store small half)
+    priority_queue<int> leftHeap;  
+    
+    // right side min-heap (store big half)
+    priority_queue<int, vector<int>, greater<int>> rightHeap;
+
+    MedianFinder() {
+        // init empty
+    }
+    
+    // function to add new number
+    void addNum(int num) {
+        // Step1: pehle left me daal dete hain by default
+        if(leftHeap.empty() || num <= leftHeap.top()){
+            leftHeap.push(num);
+        } else {
+            rightHeap.push(num);
+        }
+
+        // Step2: balance dono heap ka size
+        if(leftHeap.size() > rightHeap.size() + 1){
+            // left jyada bada ho gaya toh ek element right me bhejdo
+            rightHeap.push(leftHeap.top());
+            leftHeap.pop();
+        }
+        else if(rightHeap.size() > leftHeap.size()){
+            // right bada ho gaya toh ek element left me bhejdo
+            leftHeap.push(rightHeap.top());
+            rightHeap.pop();
+        }
+    }
+    
+    // function to get median
+    double findMedian() {
+        if(leftHeap.size() == rightHeap.size()){
+            // even size → avg of two mid
+            return (leftHeap.top() + rightHeap.top()) / 2.0;
+        } else {
+            // odd size → leftHeap bada hoga
+            return leftHeap.top();
+        }
+    }
+};

@@ -1,0 +1,29 @@
+class Subsets {
+public:
+    vector<vector<int>> subsets(vector<int>& nums) {
+        vector<vector<int>> resultList;   // final result ka dabba
+        vector<int> tempSet;              // temporary subset
+        backtrack(resultList, tempSet, nums, 0);
+        return resultList;
+    }
+
+private:
+    void backtrack(vector<vector<int>>& resultSets,
+                   vector<int>& tempSet,
+                   vector<int>& nums,
+                   int start) {
+        // tempSet ka ek copy result me daal do
+        resultSets.push_back(tempSet);
+
+        for (int i = start; i < nums.size(); i++) {
+            // Case 1: include nums[i]
+            tempSet.push_back(nums[i]);
+
+            // Recursively explore agle elements ke saath
+            backtrack(resultSets, tempSet, nums, i + 1);
+
+            // Case 2: exclude nums[i] (backtrack)
+            tempSet.pop_back();
+        }
+    }
+};

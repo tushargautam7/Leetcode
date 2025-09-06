@@ -1,0 +1,32 @@
+class Solution {
+public:
+    vector<vector<int>>result;
+    vector<int>curr;
+    vector<int>used;
+
+    void backtrack(vector<int>& nums){
+        if(curr.size()==nums.size()){
+            result.push_back(curr);
+            return;
+        }
+        for(int i=0;i<nums.size();i++){
+            if(used[i])continue;
+            curr.push_back(nums[i]);
+            used[i]=true;
+
+            backtrack(nums);
+
+            curr.pop_back();
+            used[i]=false;
+        }
+        return;
+    }
+
+    vector<vector<int>> permute(vector<int>& nums) {
+        int n=nums.size();
+        used.assign(n,false);
+        backtrack(nums);
+        return result;
+
+    }
+};

@@ -1,0 +1,39 @@
+class Solution {
+public:
+
+    vector<vector<string>>solution; // bhai yaha hum sare boards store karenge
+    vector<string>board;            // current board ka snapshot bhai
+    vector<int>cols,diag1,diag2;   // bhai ye teen arrays kaam aayenge safe check ke liye
+    int n;                          // bhai N ka size, class ke andar rakha easy rehne ko
+
+
+    void backtrack(int row){        // bhai yaha recursion start ho rha hai
+        if(row==n){                 // bhai agar last row cross kar gaye toh matlab board ready hai
+            solution.push_back(board); // bhai solution me current board push kar
+            return;                 // bhai wapas aaja previous row pe
+        }
+        for(int col=0;col<n;col++){ // bhai har column check kar raha hu iss row me
+            if(cols[col]||diag1[row-col+n]||diag2[row+col])continue; // bhai agar attack ho rha ho skip kar
+
+            board[row][col]='Q';    // bhai queen place kar di
+            cols[col]=diag1[row-col+n]=diag2[row+col]=1; // bhai column aur diagonal mark kar diya
+
+            backtrack(row+1);       // bhai next row pe jaa
+
+            board[row][col]='.';    // bhai backtrack kar raha hu, queen hata di
+            cols[col]=diag1[row-col+n]=diag2[row+col]=0; // bhai column aur diagonal unmark kar diya
+        }
+    }
+
+
+    vector<vector<string>> solveNQueens(int N) {
+        n=N;                          // bhai N set kar diya class ke member me
+        board = vector<string>(n, string(n, '.')); // bhai empty board ready
+        cols = vector<int>(n, 0);     // bhai column free hai initially
+        diag1 = vector<int>(2*n, 0);  // bhai "/" diagonals free
+        diag2 = vector<int>(2*n, 0);  // bhai "\" diagonals free
+
+        backtrack(0);                 // bhai first row se start kar recursion
+        return solution;              // bhai final solution return kar
+    }
+};

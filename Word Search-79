@@ -1,0 +1,74 @@
+class Solution {
+public:
+    int row, col;
+    vector<vector<char>> mat;  // board ka desi naam
+    string wordy;              // word jisko dhundna hai
+
+    // dfs bhai recursive
+    bool dfsBhai(int r, int c, int idx, vector<vector<int>>& visit) {
+        // base case -> pura word mil gya
+        if (idx == wordy.size()) return true;
+
+        // boundary + visited + mismatch check
+        if (r < 0 || r >= row || c < 0 || c >= col) return false;
+        if (visit[r][c] == 1) return false;
+        if (mat[r][c] != wordy[idx]) return false;
+
+        // mark kar bhai visited
+        visit[r][c] = 1;
+
+        // charo side chhod mat, sab try kar
+        bool milgya = dfsBhai(r+1, c, idx+1, visit) ||
+                      dfsBhai(r-1, c, idx+1, visit) ||
+                      dfsBhai(r, c+1, idx+1, visit) ||
+                      dfsBhai(r, c-1, idx+1, visit);
+
+        // backtrack kar, nishan mita de
+        visit[r][c] = 0;
+
+        return milgya;
+    }
+
+    bool exist(vector<vector<char>>& input, string w) {
+        mat = input;
+        wordy = w;
+        row = mat.size();
+        col = mat[0].size();
+
+        // ---- step 1: freq count karo board ka ----
+        unordered_map<char,int> freqBoard, freqWord;
+        for (int i=0; i<row; i++) {
+            for (int j=0; j<col; j++) {
+                freqBoard[mat[i][j]]++;
+            }
+        }
+        for (int i=0; i<wordy.size(); i++) {
+            freqWord[wordy[i]]++;
+        }
+
+        // agar board me letter kam hua toh seedha bhaag jao
+        for (auto &p : freqWord) {
+            if (freqBoard[p.first] < p.second) return false;
+        }
+
+        // ---- step 2: rare char trick ----
+        char firstChar = wordy[0];
+        char lastChar  = wordy.back();
+        if (freqBoard[firstChar] > freqBoard[lastChar]) {
+            reverse(wordy.begin(), wordy.end()); // ulta kar diya
+        }
+
+        // ---- step 3: DFS start sirf rare char ke jagah se ----
+        vector<vector<int>> visit(row, vector<int>(col, 0));
+
+        for (int i=0; i<row; i++) {
+            for (int j=0; j<col; j++) {
+                if (mat[i][j] == wordy[0]) {
+                    if (dfsBhai(i, j, 0, visit)) return true;
+                }
+            }
+        }
+
+        return false;
+    }
+};

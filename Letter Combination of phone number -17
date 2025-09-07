@@ -1,0 +1,34 @@
+class Solution {
+public:
+    vector<string> letterCombinations(string digits) {
+        if (digits.empty()) return {};          // bhai empty input → return empty vector
+
+        vector<string> result;                  // final combos store karenge
+        string current;                          // current combo build karenge
+        vector<string> digitMap = {             // number → letters mapping
+            "",     "",     "abc",  "def",      // 0,1,2,3
+            "ghi",  "jkl",  "mno",  "pqrs",    // 4,5,6,7
+            "tuv",  "wxyz"                     // 8,9
+        };
+
+        backtrack(digits, 0, digitMap, current, result); // start recursion
+        return result;
+    }
+
+private:
+    void backtrack(const string& digits, int index, const vector<string>& map,
+                   string& current, vector<string>& result) {
+        if (index == digits.size()) {             // bhai pura digits cover ho gya
+            result.push_back(current);           // push current combo
+            return;
+        }
+
+        string letters = map[digits[index] - '0']; // current digit ke letters
+        for (int i = 0; i < letters.size(); i++) { // normal for loop bhai
+            char ch = letters[i];                 // pick letter
+            current.push_back(ch);                // add to current combo
+            backtrack(digits, index + 1, map, current, result); // recurse next digit
+            current.pop_back();                   // backtrack → remove last char
+        }
+    }
+};

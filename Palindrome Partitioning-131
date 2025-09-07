@@ -1,0 +1,47 @@
+class Solution {
+public:
+
+    // 🔹 Helper fn to check palindrome fast (two pointer style)
+    bool isPal(string &s, int l, int r) {
+        while(l < r) {
+            if(s[l] != s[r]) return false; // mismatch mila toh palindrome nahi
+            l++;
+            r--;
+        }
+        return true; // agar pura match hua toh palindrome
+    }
+
+    // 🔹 Backtracking fn
+    void solve(int idx, string &s, vector<string> &curr, vector<vector<string>> &ans) {
+        // base case → string pura cover ho gaya
+        if(idx == s.size()) {
+            ans.push_back(curr); // ek valid partition mil gaya
+            return;
+        }
+
+        // har index se substring try karo
+        for(int i = idx; i < s.size(); i++) {
+            // check kar substring palindrome hai kya
+            if(isPal(s, idx, i)) {
+                // agar palindrome hai toh curr partition me dalo
+                curr.push_back(s.substr(idx, i - idx + 1));
+
+                // aage explore karne ke liye recursive call
+                solve(i + 1, s, curr, ans);
+
+                // backtrack → last element nikal do
+                curr.pop_back();
+            }
+            // agar palindrome nahi hai toh kuch mat karo → skip ho jayega
+        }
+    }
+
+    vector<vector<string>> partition(string s) {
+        vector<vector<string>> ans;   // final ans store karega
+        vector<string> curr;          // abhi tak ka partition store karega
+
+        solve(0, s, curr, ans);       // recursion start from index 0
+
+        return ans;                   // return all partitions
+    }
+};

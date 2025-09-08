@@ -1,0 +1,26 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+class Solution {
+public:
+    // helper fn: check if num has '0' digit or not
+    bool hasZero(int x) {
+        while (x > 0) {
+            if (x % 10 == 0) return true; // agar last digit 0 nikla toh gadbad
+            x /= 10; // next digit check karte hain
+        }
+        return false; // koi 0 nahi mila toh safe hai
+    }
+
+    vector<int> getNoZeroIntegers(int n) {
+        // brute force: a ko 1 se n-1 tak check karte hain
+        for (int a = 1; a < n; a++) {
+            int b = n - a;
+            // dono me 0 digit nahi hona chahiye
+            if (!hasZero(a) && !hasZero(b)) {
+                return {a, b}; // pehla valid pair mil gaya toh bas return
+            }
+        }
+        return {}; // yaha kabhi nahi aayega kyunki solution guaranteed hai
+    }
+};

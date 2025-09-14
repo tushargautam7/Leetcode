@@ -1,0 +1,59 @@
+class Solution {
+public:
+    vector<string> spellchecker(vector<string>& wordlist, vector<string>& queries) {
+        unordered_set<string> exact;  // for exact matches
+        unordered_map<string, string> caseInsensitive; // lowercase -> first match
+        unordered_map<string, string> vowelInsensitive; // devowel(lowercase) -> first match
+
+        // Build dictionaries
+        for (string w : wordlist) {
+            exact.insert(w);
+
+            string lower = w;
+            for (auto &c : lower) c = tolower(c);
+            if (!caseInsensitive.count(lower))
+                caseInsensitive[lower] = w;
+
+            string vword = devowel(lower);
+            if (!vowelInsensitive.count(vword))
+                vowelInsensitive[vword] = w;
+        }
+
+        // Answer queries
+        vector<string> ans;
+        for (string q : queries) {
+            if (exact.count(q)) {
+                ans.push_back(q);
+                continue;
+            }
+
+            string lower = q;
+            for (auto &c : lower) c = tolower(c);
+            if (caseInsensitive.count(lower)) {
+                ans.push_back(caseInsensitive[lower]);
+                continue;
+            }
+
+            string vq = devowel(lower);
+            if (vowelInsensitive.count(vq)) {
+                ans.push_back(vowelInsensitive[vq]);
+                continue;
+            }
+
+            ans.push_back("");
+        }
+        return ans;
+    }
+
+private:
+    string devowel(string word) {
+        for (auto &ch : word) {
+            char lower = tolower(ch);
+            if (lower=='a'||lower=='e'||lower=='i'||lower=='o'||lower=='u')
+                ch = '*';
+            else
+                ch = lower;
+        }
+        return word;
+    }
+};

@@ -1,0 +1,23 @@
+class Solution {
+public:
+    vector<int> replaceNonCoprimes(vector<int>& nums) {
+        vector<int> stk;
+        for (int x : nums) {
+            stk.push_back(x);
+            // keep merging while last two are non-coprime
+            while (stk.size() >= 2) {
+                int a = stk.back(); stk.pop_back();
+                int b = stk.back(); stk.pop_back();
+                int g = gcd(a, b);
+                if (g == 1) {
+                    stk.push_back(b);
+                    stk.push_back(a);
+                    break;
+                }
+                long long lcm = 1LL * a / g * b; // use long long to avoid overflow
+                stk.push_back((int)lcm);
+            }
+        }
+        return stk;
+    }
+};

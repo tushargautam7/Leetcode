@@ -1,0 +1,54 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+class TaskManager {
+    // taskId -> {userId, priority}
+    unordered_map<int, pair<int,int>> taskMap;
+
+    // comparator: higher priority first, if tie higher taskId first
+    struct Cmp {
+        bool operator()(const tuple<int,int,int>& a, const tuple<int,int,int>& b) const {
+            auto [pa, ta, ua] = a;
+            auto [pb, tb, ub] = b;
+            if (pa != pb) return pa > pb;   // higher priority first
+            if (ta != tb) return ta > tb;   // higher taskId first
+            return ua < ub;                 // to ensure uniqueness
+        }
+    };
+
+    // store (priority, taskId, userId)
+    set<tuple<int,int,int>, Cmp> taskSet;
+
+public:
+    TaskManager(vector<vector<int>>& tasks) {
+        for (auto &t : tasks) {
+            add(t[0], t[1], t[2]);
+        }
+    }
+
+    void add(int userId, int taskId, int priority) {
+        taskMap[taskId] = {userId, priority};
+        taskSet.insert({priority, taskId, userId});
+    }
+
+    void edit(int taskId, int newPriority) {
+        auto [userId, oldPriority] = taskMap[taskId];
+        taskSet.erase({oldPriority, taskId, userId});
+        taskMap[taskId] = {userId, newPriority};
+        taskSet.insert({newPriority, taskId, userId});
+    }
+
+    void rmv(int taskId) {
+        auto [userId, priority] = taskMap[taskId];
+        taskSet.erase({priority, taskId, userId});
+        taskMap.erase(taskId);
+    }
+
+    int execTop() {
+        if (taskSet.empty()) return -1;
+        auto [priority, taskId, userId] = *taskSet.begin();
+        taskSet.erase(taskSet.begin());
+        taskMap.erase(taskId);
+        return userId;
+    }
+};

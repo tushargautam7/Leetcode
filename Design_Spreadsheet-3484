@@ -1,0 +1,38 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+class Spreadsheet {
+private:
+    unordered_map<string, int> data;
+
+public:
+    Spreadsheet(int rows) {
+        // rows not needed, since we treat unset cells as 0
+    }
+
+    void setCell(string cell, int value) {
+        data[cell] = value;
+    }
+
+    void resetCell(string cell) {
+        data.erase(cell);
+    }
+
+    int getValue(string formula) {
+        // formula starts with '='
+        string expr = formula.substr(1);
+        size_t plusPos = expr.find('+');
+        string left = expr.substr(0, plusPos);
+        string right = expr.substr(plusPos + 1);
+
+        return parseToken(left) + parseToken(right);
+    }
+
+private:
+    int parseToken(const string& token) {
+        if (isdigit(token[0])) {
+            return stoi(token);
+        }
+        return data.count(token) ? data[token] : 0;
+    }
+};

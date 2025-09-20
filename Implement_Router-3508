@@ -1,0 +1,55 @@
+struct Packet {
+    int source, destination, timestamp;
+    bool operator==(const Packet &o) const {
+        return source == o.source && destination == o.destination && timestamp == o.timestamp;
+    }
+};
+
+// Hash function for Packet (needed for unordered_set)
+struct PacketHash {
+    size_t operator()(const Packet &p) const {
+        return ((size_t)p.source * 1315423911u) ^ 
+               ((size_t)p.destination * 2654435761u) ^ 
+               (size_t)p.timestamp;
+    }
+};
+
+class Router {
+    int memoryLimit;
+    deque<Packet> q;  // FIFO packet queue
+    unordered_set<Packet, PacketHash> seen; // to avoid duplicates
+    unordered_map<int, vector<int>> destTimestamps; // dest -> all timestamps
+    unordered_map<int, int> processedIndex; // dest -> how many forwarded
+public:
+    Router(int memoryLimit) : memoryLimit(memoryLimit) {}
+
+    bool addPacket(int source, int destination, int timestamp) {
+        Packet p{source, destination, timestamp};
+        if (seen.count(p)) return false;
+        if ((int)q.size() == memoryLimit) {
+            forwardPacket(); // make space
+        }
+        q.push_back(p);
+        seen.insert(p);
+        destTimestamps[destination].push_back(timestamp);
+        return true;
+    }
+    
+    vector<int> forwardPacket() {
+        if (q.empty()) return {};
+        Packet p = q.front(); q.pop_front();
+        seen.erase(p);
+        processedIndex[p.destination]++; // mark one forwarded
+        return {p.source, p.destination, p.timestamp};
+    }
+    
+    int getCount(int destination, int startTime, int endTime) {
+        if (!destTimestamps.count(destination)) return 0;
+        auto &timestamps = destTimestamps[destination];
+        int startIdx = processedIndex[destination];
+        if (startIdx >= (int)timestamps.size()) return 0;
+        auto lo = lower_bound(timestamps.begin() + startIdx, timestamps.end(), startTime);
+        auto hi = upper_bound(timestamps.begin() + startIdx, timestamps.end(), endTime);
+        return max(0, (int)(hi - lo));
+    }
+};

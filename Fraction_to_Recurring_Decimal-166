@@ -1,0 +1,42 @@
+class Solution {
+public:
+    string fractionToDecimal(long long numerator, long long denominator) {
+        if (numerator == 0) return "0";  
+
+        string result;
+
+        // check sign
+        if ((numerator < 0) ^ (denominator < 0)) result.push_back('-');
+
+        // convert to positive long long
+        long long num = llabs(numerator);
+        long long den = llabs(denominator);
+
+        // integer part
+        result += to_string(num / den);
+        long long rem = num % den;
+
+        if (rem == 0) return result;  // no fractional part
+
+        result.push_back('.');
+
+        // map remainder -> position in result string
+        unordered_map<long long, int> seen;
+
+        while (rem != 0) {
+            if (seen.count(rem)) {
+                // repeating detected
+                result.insert(seen[rem], "(");
+                result.push_back(')');
+                break;
+            }
+
+            seen[rem] = result.size();
+            rem *= 10;
+            result += to_string(rem / den);
+            rem %= den;
+        }
+
+        return result;
+    }
+};

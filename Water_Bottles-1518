@@ -1,0 +1,14 @@
+class Solution {
+public:
+    int numWaterBottles(int numBottles, int numExchange) {
+        int total = numBottles;      // all initial bottles can be drunk
+        int empty = numBottles;      // now we have these empty bottles
+
+        while (empty >= numExchange) {
+            int newBottles = empty / numExchange;  // exchange
+            total += newBottles;
+            empty = newBottles + (empty % numExchange); 
+        }
+        return total;
+    }
+};

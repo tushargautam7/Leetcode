@@ -1,0 +1,24 @@
+class Solution {
+public:
+    int maxBottlesDrunk(int numBottles, int numExchange) {
+        int full = numBottles, empty = 0;
+        int ans = 0, k = numExchange;
+
+        while (full > 0) {
+            // Drink all full bottles
+            ans += full;
+            empty += full;
+            full = 0;
+
+            // Try one exchange if possible
+            if (empty >= k) {
+                full += 1;
+                empty -= k;
+                k += 1;  // cost increases for next exchange
+            } else {
+                break;
+            }
+        }
+        return ans;
+    }
+};

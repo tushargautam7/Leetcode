@@ -1,0 +1,18 @@
+class Solution {
+public:
+    int maximum69Number (int num) {
+        // step1: num ko string me convert kar le
+        string s = to_string(num);
+        
+        // step2: left se first '6' dhundh aur '9' me badal de
+        for (char &c : s) {
+            if (c == '6') {
+                c = '9'; // flip kar diya bhai
+                break;   // ek hi flip allowed hai
+            }
+        }
+
+        // step3: string ko back int me convert kar
+        return stoi(s);
+    }
+};

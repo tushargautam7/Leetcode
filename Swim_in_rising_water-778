@@ -1,0 +1,57 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+// Bhaiyya: LeetCode 778 - Swim in Rising Water
+// Using Dijkstra-style minimax: push (timeSoFar, r, c) where timeSoFar = max of heights seen on path.
+
+// class for LeetCode expected signature
+class Solution {
+public:
+    int swimInWater(vector<vector<int>>& grid) {
+        int n = grid.size();
+        if (n == 0) return 0;
+
+        // minTime[r][c] = best (minimum possible) maximum-height encountered to reach (r,c)
+        const int INF = 1e9;
+        vector<vector<int>> minTime(n, vector<int>(n, INF));
+
+        // min-heap: smallest current path-max first
+        using T = tuple<int,int,int>; // (timeSoFar, r, c)
+        priority_queue<T, vector<T>, greater<T>> pq;
+
+        // start from (0,0): time needed at start is grid[0][0]
+        minTime[0][0] = grid[0][0];
+        pq.emplace(grid[0][0], 0, 0);
+
+        // 4-neigh
+        int dr[4] = {-1, 1, 0, 0};
+        int dc[4] = {0, 0, -1, 1};
+
+        while (!pq.empty()) {
+            auto [t, r, c] = pq.top(); pq.pop();
+
+            // If we popped a worse entry (stale), skip
+            if (t != minTime[r][c]) continue;
+
+            // If reached target, this t is minimal possible — return it
+            if (r == n-1 && c == n-1) return t;
+
+            // explore neighbors
+            for (int k = 0; k < 4; ++k) {
+                int nr = r + dr[k];
+                int nc = c + dc[k];
+                if (nr < 0 || nr >= n || nc < 0 || nc >= n) continue;
+
+                // If we move to neighbor, path's required time becomes max(current path time, neighbor height)
+                int need = max(t, grid[nr][nc]);
+                if (need < minTime[nr][nc]) {
+                    minTime[nr][nc] = need;
+                    pq.emplace(need, nr, nc);
+                }
+            }
+        }
+
+        // theoretically unreachable because grid is finite and connected, but just in case:
+        return -1;
+    }
+};

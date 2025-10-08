@@ -1,0 +1,30 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+class Solution {
+public:
+    vector<int> successfulPairs(vector<int>& spells, vector<int>& potions, long long success) {
+        // Step 1: sort the potions so we can do binary search easily
+        sort(potions.begin(), potions.end());
+        int m = potions.size(); // total potions count
+        vector<int> ans;        // will store the final answer
+        ans.reserve(spells.size()); // just optimizing memory
+
+        // Step 2: go through each spell one by one
+        for (long long s : spells) {
+            // Need minimum potion value that satisfies s * potion >= success
+            // rearranging => potion >= success / s
+            // Using ceiling division to avoid float mess
+            long long p_min = (success + s - 1) / s;  // ceil(success / s)
+
+            // Step 3: binary search for the first potion >= p_min
+            auto it = lower_bound(potions.begin(), potions.end(), p_min);
+
+            // Step 4: count how many potions are successful for this spell
+            int idx = it - potions.begin(); // index where we found first valid potion
+            int count = m - idx;            // all after this index are valid
+            ans.push_back(count);           // store the result
+        }
+        return ans;
+    }
+};

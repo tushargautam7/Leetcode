@@ -1,0 +1,33 @@
+class Solution {
+public:
+    long long minTime(vector<int>& skill, vector<int>& mana) {
+        int n = skill.size();
+        int m = mana.size();
+        long long sumSkill = 0;
+        for (int x : skill) sumSkill += x; // total skill sum
+
+        // prevWizardDone = finish time after processing first potion (j=0) by the whole pipeline
+        long long prevWizardDone = sumSkill * 1LL * mana[0];
+
+        // iterate potions from second (j=1) to last
+        for (int j = 1; j < m; ++j) {
+            long long prevPotionDone = prevWizardDone; // helper, tracks end-time sliding
+            // walk wizards backwards (from second-last wizard down to first)
+            for (int i = n - 2; i >= 0; --i) {
+                // reduce prevPotionDone by time wizard (i+1) took for previous potion (j-1)
+                prevPotionDone -= static_cast<long long>(skill[i + 1]) * mana[j - 1];
+
+                // Two constraints for start:
+                // 1) prevPotionDone = earliest time wizard i can start this potion due to previous potions
+                // 2) prevWizardDone - time(i, j) = earliest time due to later wizards finishing (so no overlap)
+                // take max of constraints to ensure feasibility
+                prevWizardDone = max(prevPotionDone,
+                                     prevWizardDone - static_cast<long long>(skill[i]) * mana[j]);
+            }
+            // after adjusting starts for all wizards for potion j, add total processing time of potion j
+            prevWizardDone += sumSkill * 1LL * mana[j];
+        }
+
+        return prevWizardDone;
+    }
+};

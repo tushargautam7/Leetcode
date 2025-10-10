@@ -1,0 +1,24 @@
+class Solution {
+public:
+    int maximumEnergy(vector<int>& energy, int k) {
+        int n = energy.size();
+        int ans = INT_MIN; // ye final max energy store karega
+
+        // har remainder group (0 to k-1) pe chalte hain
+        for (int r = 0; r < k; r++) {
+            int sum = 0; // chain ka running sum
+
+            // reverse me chalo, step size = k
+            // basically har chain ko peeche se traverse kar rahe hain
+            for (int j = n - 1 - r; j >= 0; j -= k) {
+                sum += energy[j]; // energy add karte jao
+                ans = max(ans, sum); // max update kar do
+
+                // agar sum negative ho gaya toh reset kar do
+                // kyunki next chain me fresh start chahiye
+                // (optional optimization)
+            }
+        }
+        return ans;
+    }
+};
